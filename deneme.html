@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tatlı Kedi Dünyası</title>
+    
+    <!-- Gerekli tüm stiller (CSS) burada -->
+    <style>
+        /* Google'dan "tatlı" bir font yüklüyoruz: Pacifico */
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+        /* Sayfanın temel ayarları */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            /* Tatlı bir arka plan gradient'i (Daha pembe/lavanta) */
+            background: linear-gradient(135deg, #ffebf7 0%, #e6e6fa 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* İçeriği üste, ortaya ve alta yayar */
+            overflow-x: hidden; /* Yatay kaydırmayı engeller */
+        }
+
+        /* Üst ve Alt Kedi Alanları */
+        .cat-banner {
+            position: relative;
+            height: 150px; /* Kedilere yer açar */
+            width: 100%;
+        }
+
+        /* * KEDİ STİLLERİ (CSS ile çizim) 
+         * Tek bir .cat sınıfı ve pozisyon için ID'ler kullanıyoruz.
+         */
+        .cat {
+            position: absolute;
+            width: 100px;
+            height: 80px;
+            z-index: 10;
+        }
+
+        /* Kedi Kafası */
+        .cat .head {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 100%;
+            background: #feeef5; /* Kedi rengi (Açık Pembe) */
+            border: 3px solid #e05d9f; /* Koyu pembe kontur */
+            /* Kedi kafası şekli için sihirli border-radius */
+            border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%;
+            box-shadow: 0 4px 10px rgba(224, 93, 159, 0.2);
+        }
+
+        /* Kedi Kulakları */
+        .cat .ear {
+            position: absolute;
+            top: -15px;
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 30px solid #feeef5; /* Kedi rengi (Açık Pembe) */
+            z-index: -1;
+            /* Kulak iç pembe kısım */
+            filter: drop-shadow(0 4px 0 #ffc0cb); /* Daha canlı pembe */
+        }
+        .cat .ear.left {
+            left: 5px;
+            transform: rotate(-25deg);
+        }
+        .cat .ear.right {
+            right: 5px;
+            transform: rotate(25deg);
+        }
+
+        /* Kedi Gözleri */
+        .cat .eye {
+            position: absolute;
+            top: 35px;
+            width: 15px;
+            height: 20px;
+            background: #ffffff;
+            border: 2px solid #e05d9f; /* Koyu pembe kontur */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .cat .eye.left { left: 25px; }
+        .cat .eye.right { right: 25px; }
+
+        /* Göz Bebeği (Blink animasyonu için) */
+        .cat .pupil {
+            width: 8px;
+            height: 10px;
+            background: #e05d9f; /* Koyu pembe */
+            border-radius: 50%;
+            animation: blink 4s infinite ease-in-out; /* Göz kırpma animasyonu */
+        }
+        
+        /* Kedi Burnu ve Ağzı */
+        .cat .nose {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 8px;
+            background: #ffb6c1; /* Pembe burun */
+            border: 2px solid #e05d9f; /* Koyu pembe kontur */
+            border-radius: 40% 40% 50% 50%;
+        }
+
+        /* Kedi Kuyruğu */
+        .cat .tail {
+            position: absolute;
+            width: 100px;
+            height: 20px;
+            background: #feeef5; /* Kedi rengi (Açık Pembe) */
+            border: 3px solid #e05d9f; /* Koyu pembe kontur */
+            border-radius: 10px;
+            z-index: -2;
+            /* Kuyruk sallama animasyonu */
+            animation: tail-wag 2s infinite ease-in-out;
+            transform-origin: left center;
+        }
+        
+        /* * KEDİ POZİSYONLARI VE ANİMASYONLARI 
+         */
+
+        /* Üst Kedi */
+        #top-cat {
+            top: 20px;
+            right: 20px;
+            transform: rotate(10deg);
+            /* Kafa sallama animasyonu */
+            animation: head-bob 3s infinite ease-in-out;
+        }
+        #top-cat .tail {
+            top: 50px;
+            left: -80px;
+            transform: rotate(30deg);
+            transform-origin: right center;
+        }
+
+        /* Alt Kedi (EKSİK KISIM EKLENDİ) */
+        #bottom-cat {
+            bottom: 20px;
+            left: 20px;
+            transform: rotate(-10deg);
+            /* Kafa sallama animasyonu (ters zamanlı) */
+            animation: head-bob 3s infinite ease-in-out 0.5s;
+        }
+        #bottom-cat .tail {
+            top: 50px;
+            right: -80px;
+            transform: rotate(-30deg);
+            transform-origin: left center;
+        }
+
+        /* Orta İçerik Alanı (Tabela) */
+        main {
+            flex-grow: 1;
+            display: grid;
+            place-items: center;
+            padding: 2rem;
+            z-index: 5; /* Kedilerin önünde (veya arkasında) olmasını sağlar */
+        }
+
+        /* Tatlı Tabela Stili (Bulutsu/Pembe) */
+        .sign {
+            background: #ffc0cb; /* Pembe tabela */
+            border: 8px dashed #ffffff; /* Beyaz "bulutsu" kenar */
+            border-radius: 40px; /* Daha yuvarlak */
+            padding: 1.5rem 2.5rem; /* Boyutu küçültmek için padding azaltıldı */
+            text-align: center;
+            max-width: 70%; /* Sayfayı kaplamaması için maksimum genişlik eklendi */
+            /* Tatlı pembe gölge */
+            box-shadow: 0 8px 15px rgba(224, 93, 159, 0.3), 
+                        inset 0 0 10px rgba(255,255,255,0.5);
+            /* Hafif eğik duruşu kaldırdık */
+            transform: rotate(0deg);
+            transition: transform 0.3s ease;
+        }
+
+        /* Tabela üzerine gelince büyür */
+        .sign:hover {
+            transform: scale(1.05);
+        }
+
+        /* Tabelanın içindeki yazı (Biraz küçültüldü) */
+        .sign h1 {
+            font-family: 'Pacifico', cursive; /* Tatlı font */
+            font-size: clamp(1.5rem, 5vw, 3rem); /* Responsive font boyutu (küçültüldü) */
+            margin: 0;
+            color: #4a2c2a; /* Koyu kahve yazı */
+            /* Yazıya "tatlı" bir gölge */
+            text-shadow: 2px 2px #ffffffa0;
+        }
+        
+        /* * Kalp Yağmuru Ayar Paneli (Kaldırıldı)
+         */
+        
+        /* * CSS ANİMASYONLARI (Keyframes)
+         */
+
+        /* Kalp Yağmuru (CSS ile çizim) */
+        .heart {
+            position: fixed;
+            top: -50px; /* Ekranın üstünden başla */
+            width: 30px;
+            height: 30px;
+            z-index: 1000;
+            animation: fall 5s linear forwards; /* 5s varsayılan, JS ile değişecek */
+            opacity: 1;
+        }
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            width: 15px;
+            height: 25px;
+            background: #ffc0cb; /* Pembe dolgu */
+            border: 2px solid #dc143c; /* Kırmızı kontur */
+            border-radius: 15px 15px 0 0;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+        .heart::after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        /* Düşme animasyonu (Yatay sapma ve dönme eklendi) */
+        @keyframes fall {
+            to {
+                /* --drift değişkeni JS tarafından atanacak */
+                transform: translateY(110vh) translateX(var(--drift, 0px)) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+
+        /* Göz Kırpma */
+        @keyframes blink {
+            0%, 90%, 100% {
+                transform: scaleY(1);
+            }
+            95% {
+                transform: scaleY(0.1); /* Gözü kısar */
+            }
+        }
+
+        /* Kuyruk Sallama */
+        @keyframes tail-wag {
+            0%, 100% {
+                transform: rotate(10deg);
+            }
+            50% {
+                transform: rotate(-10deg);
+            }
+        }
+
+        /* Kafa Sallama */
+        @keyframes head-bob {
+            0%, 100% {
+                transform: translateY(0) rotate(-2deg);
+            }
+            50% {
+                transform: translateY(-10px) rotate(2deg); /* Kafa hafifçe kalkar */
+            }
+        }
+        
+        /* Mobil cihazlar için kedileri biraz küçültelim */
+        @media (max-width: 600px) {
+            .cat {
+                transform: scale(0.7); /* Kedileri %70 küçült */
+            }
+            #top-cat {
+                top: 0;
+                right: 0;
+            }
+            #bottom-cat {
+                bottom: 0;
+                left: 0;
+            }
+            .sign {
+                padding: 1.5rem 2rem;
+                max-width: 85%; /* Mobil için de ayarlandı */
+            }
+            /* Ayarlar paneli media query kaldırıldı */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Kalp Yağmuru Ayarları (Kaldırıldı) -->
+
+    <!-- Üst Kedi Alanı -->
+    <header class="cat-banner">
+        <!-- Üst Kedi -->
+        <div class="cat" id="top-cat">
+            <div class="head">
+                <div class="ear left"></div>
+                <div class="ear right"></div>
+                <div class="eye left"><div class="pupil"></div></div>
+                <div class="eye right"><div class="pupil"></div></div>
+                <div class="nose"></div>
+            </div>
+            <div class="tail"></div>
+        </div>
+    </header>
+
+    <!-- Orta Tabela Alanı -->
+    <main>
+        <div class="sign">
+            <h1>Bu akşam birazcıık kafanı ağrıtmış olabilirim!<br>Seni seviyorum iyi geceler bitanem</h1>
+        </div>
+    </main>
+
+    <!-- Alt Kedi Alanı -->
+    <footer class="cat-banner">
+        <!-- Alt Kedi -->
+        <div class="cat" id="bottom-cat">
+            <div class="head">
+                <div class="ear left"></div>
+                <div class="ear right"></div>
+                <div class="eye left"><div class="pupil"></div></div>
+                <div class="eye right"><div class="pupil"></div></div>
+                <div class="nose"></div>
+            </div>
+            <div class="tail"></div>
+        </div>
+    </footer>
+
+    <!-- 
+        Kalp yağmuru için JavaScript eklendi!
+    -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- AYARLAR ---
+            // Kalp yağmuru ayarları artık burada, kod içinde.
+            const HEART_COUNT_PER_SECOND = 3; // Saniyede düşecek kalp sayısı (yoğunluk)
+            const HEART_SPEED_SECONDS = 5;    // Kalbin düşme süresi (saniye)
+            // --- AYARLAR SONU ---
+
+            let heartInterval;
+
+            function createHeart() {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                
+                // 1. Rastgele yatay pozisyonda başlat
+                heart.style.left = `${Math.random() * 100}vw`; 
+                
+                // 2. Hızı (animasyon süresini) ayarla (Koddaki değişkenden)
+                const duration = HEART_SPEED_SECONDS;
+                heart.style.animationDuration = `${duration}s`;
+                
+                // 3. CSS'teki animasyonun kullanması için rastgele yatay sapma ata
+                const drift = (Math.random() * 200) - 100; // -100px ile +100px arası
+                heart.style.setProperty('--drift', `${drift}px`);
+                
+                // 4. Kalbe rastgele bir başlangıç açısı ver
+                heart.style.transform = `rotate(${Math.random() * 60 - 30}deg)`;
+
+                document.body.appendChild(heart);
+
+                // 5. Animasyon bittikten sonra kalbi DOM'dan sil
+                setTimeout(() => {
+                    heart.remove();
+                }, duration * 1000); // Süre bittiğinde
+            }
+
+            // Kalp oluşturma döngüsünü başlatan/güncelleyen fonksiyon
+            function startHeartFall() {
+                // Önceki döngüyü temizle
+                if (heartInterval) clearInterval(heartInterval);
+                
+                // Yoğunluk ayarına göre yeni döngü başlat (Koddaki değişkenden)
+                const intervalDelay = 1000 / HEART_COUNT_PER_SECOND; // saniyede X kalp
+                heartInterval = setInterval(createHeart, intervalDelay);
+            }
+
+            // Sayfa yüklendiğinde döngüyü başlat
+            startHeartFall();
+            
+            // Slider event listener'ları kaldırıldı.
+        });
+    </script>
+
+</body>
+</html>
